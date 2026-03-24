@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Build output
+frontend/dist/
+
+# Environment
+.env
+.env.local
+
+# Database
+*.db
+
+# Test artifacts
+test-results/
+playwright-report/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Claude
+.claude/

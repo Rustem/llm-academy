@@ -1,0 +1,15 @@
+{
+  "name": "llm-academy",
+  "version": "1.0.0",
+  "description": "Interactive learning platform for AI prompt engineering. 23 hands-on exercises across 3 modules.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
+  }
+}
