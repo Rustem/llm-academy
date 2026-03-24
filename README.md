@@ -1,6 +1,6 @@
 # LLM Academy
 
-Interactive learning platform for AI prompt engineering. 23 hands-on exercises across 3 modules.
+Interactive learning platform for AI prompt engineering — built for **doctors, teachers, and other non-technical professionals** who want to use AI effectively in their daily work. 23 hands-on exercises across 3 modules, no coding required.
 
 ## Quick Start
 
