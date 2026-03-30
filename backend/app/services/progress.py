@@ -37,6 +37,8 @@ def build_progress_response(completed: list, course_id: str | None = None) -> Pr
                 exercise_id=c.exercise_id,
                 stars=c.stars,
                 xp_earned=c.xp_earned,
+                prompt_used=c.prompt_used,
+                attempt_count=getattr(c, "attempt_count", 1) or 1,
                 completed_at=c.completed_at.isoformat() if c.completed_at else None,
             )
             for c in completed

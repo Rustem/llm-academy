@@ -64,7 +64,9 @@
     "evaluating": "Evaluando...",
     "useTemplate": "Usar plantilla",
     "hideTemplates": "Ocultar plantillas",
-    "templateHint": "Plantillas de prompts — clic para insertar"
+    "templateHint": "Plantillas de prompts — clic para insertar",
+    "showHistory": "Historial de intentos",
+    "hideHistory": "Ocultar historial"
   },
   "auth": {
     "welcomeBack": "Bienvenido de vuelta",

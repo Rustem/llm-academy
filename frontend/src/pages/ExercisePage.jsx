@@ -41,6 +41,8 @@ export default function ExercisePage() {
   const [showTemplates, setShowTemplates] = useState(false);
   const [templates, setTemplates] = useState([]);
   const [error, setError] = useState(null);
+  const [attempts, setAttempts] = useState([]);
+  const [showAttempts, setShowAttempts] = useState(false);
 
   const course = COURSES.find(c => c.id === courseId);
 
@@ -49,9 +51,21 @@ export default function ExercisePage() {
   useEffect(() => { fetchTemplates(courseId).then(setTemplates).catch(() => {}); }, [courseId]);
   useEffect(() => {
     window.scrollTo(0, 0);
-    setPrompt(""); setResp(""); setEv(null); setError(null);
+    const saved = progress.completed?.[parseInt(id)];
+    setPrompt(saved?.prompt_used || "");
+    setResp(""); setEv(null); setError(null);
     setHint(false); setShowMat(false); setShowTemplates(false);
-  }, [id]);
+    setAttempts([]); setShowAttempts(false);
+  }, [id, progress.completed]);
+
+  // Load attempts when exercise changes
+  useEffect(() => {
+    if (courseId && id) {
+      import("../services/progress").then(mod =>
+        mod.fetchAttempts(courseId, id).then(setAttempts).catch(() => {})
+      );
+    }
+  }, [courseId, id]);
 
   if (!sel || !course) return null;
 
@@ -77,9 +91,14 @@ export default function ExercisePage() {
     try {
       const result = await evaluatePrompt(sel.id, prompt, resp, model, courseId);
       setEv(result);
-      if (result.stars >= 3 && !done[sel.id]) {
-        await complete(sel.id, result.stars, result.stars >= 4 ? sel.xp : Math.floor(sel.xp * 0.7), prompt);
+      if (result.stars >= 3) {
+        const xp = result.stars >= 4 ? sel.xp : Math.floor(sel.xp * 0.7);
+        await complete(sel.id, result.stars, xp, prompt, resp, model);
         await refreshUser();
+        // Refresh attempts list
+        import("../services/progress").then(mod =>
+          mod.fetchAttempts(courseId, id).then(setAttempts).catch(() => {})
+        );
       }
     } catch (e) { setError(e.message); }
     setEvaling(false);
@@ -170,6 +189,46 @@ export default function ExercisePage() {
                 onNext={() => nx ? navigate(`/course/${courseId}/exercise/${nx.id}`) : navigate(`/course/${courseId}`)}
                 nextExercise={nx}
               />
+            )}
+
+            {/* Attempt History */}
+            {attempts.length > 0 && (
+              <div style={{ marginTop: 12 }}>
+                <button onClick={() => setShowAttempts(!showAttempts)} style={{
+                  background: "none", border: "none", fontFamily: sn, fontSize: 12, color: T.tm,
+                  cursor: "pointer", padding: "3px 0", textDecoration: "underline", textUnderlineOffset: 3,
+                }}>
+                  {showAttempts ? t("exercise.hideHistory") : `${t("exercise.showHistory")} (${attempts.length})`}
+                </button>
+                {showAttempts && (
+                  <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 6 }}>
+                    {attempts.map(a => (
+                      <div
+                        key={a.id}
+                        onClick={() => { setPrompt(a.prompt_used || ""); setShowAttempts(false); }}
+                        style={{
+                          background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 8,
+                          padding: "10px 14px", cursor: "pointer", transition: "all 0.15s",
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = T.ac; }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; }}
+                      >
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
+                          <span style={{ fontSize: 12, fontWeight: 600, color: T.text }}>
+                            #{a.attempt_number} — {"★".repeat(a.stars)}{"☆".repeat(5 - a.stars)}
+                          </span>
+                          <span style={{ fontSize: 10, color: T.td }}>
+                            {a.model_used?.split("/").pop() || ""} · {new Date(a.created_at).toLocaleString()}
+                          </span>
+                        </div>
+                        <p style={{ fontSize: 11, color: T.tm, margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {a.prompt_used?.substring(0, 100) || "—"}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>

@@ -18,8 +18,8 @@ export function useProgress(courseId = "general") {
 
   useEffect(() => { load(); }, [load]);
 
-  const complete = async (exerciseId, stars, xpEarned, promptUsed) => {
-    const data = await progressService.completeExercise(exerciseId, stars, xpEarned, promptUsed, courseId);
+  const complete = async (exerciseId, stars, xpEarned, promptUsed, aiResponse, modelUsed) => {
+    const data = await progressService.completeExercise(exerciseId, stars, xpEarned, promptUsed, aiResponse, modelUsed, courseId);
     setProgress(data);
     return data;
   };

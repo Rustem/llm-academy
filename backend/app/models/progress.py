@@ -19,6 +19,25 @@ class CompletedExercise(Base):
     stars: Mapped[int] = mapped_column(Integer, nullable=False)
     xp_earned: Mapped[int] = mapped_column(Integer, nullable=False)
     prompt_used: Mapped[str | None] = mapped_column(Text, nullable=True)
+    attempt_count: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     completed_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="completed_exercises")
+
+
+class ExerciseAttempt(Base):
+    __tablename__ = "exercise_attempts"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    course_id: Mapped[str] = mapped_column(String, nullable=False, default="general")
+    exercise_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    attempt_number: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    stars: Mapped[int] = mapped_column(Integer, nullable=False)
+    xp_earned: Mapped[int] = mapped_column(Integer, nullable=False)
+    prompt_used: Mapped[str | None] = mapped_column(Text, nullable=True)
+    ai_response: Mapped[str | None] = mapped_column(Text, nullable=True)
+    model_used: Mapped[str | None] = mapped_column(String, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User")

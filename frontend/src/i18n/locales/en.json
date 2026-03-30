@@ -64,7 +64,9 @@
     "evaluating": "Evaluating...",
     "useTemplate": "Use a template",
     "hideTemplates": "Hide templates",
-    "templateHint": "Prompt templates — click to insert"
+    "templateHint": "Prompt templates — click to insert",
+    "showHistory": "Attempt history",
+    "hideHistory": "Hide history"
   },
   "auth": {
     "welcomeBack": "Welcome back",

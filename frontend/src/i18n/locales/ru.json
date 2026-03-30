@@ -64,7 +64,9 @@
     "evaluating": "Оценка...",
     "useTemplate": "Использовать шаблон",
     "hideTemplates": "Скрыть шаблоны",
-    "templateHint": "Шаблоны промптов — нажмите для вставки"
+    "templateHint": "Шаблоны промптов — нажмите для вставки",
+    "showHistory": "История попыток",
+    "hideHistory": "Скрыть историю"
   },
   "auth": {
     "welcomeBack": "С возвращением",
