@@ -76,7 +76,6 @@ export default function CoursesPage() {
         <div style={{ marginTop: 32, display: "flex", justifyContent: "center", gap: 10 }}>
           {[
             { to: "/leaderboard", label: t("leaderboard.title") },
-            ...(user ? [{ to: "/classrooms", label: t("classroom.title") }] : []),
           ].map(link => (
             <button key={link.to}
               onClick={() => navigate(link.to)}

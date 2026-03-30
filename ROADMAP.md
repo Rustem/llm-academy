@@ -18,10 +18,13 @@
 - [x] Export & share your best prompts
 - [x] User profiles with public stats
 
-## Phase 4 — Teams & Classrooms
-- [x] Classroom mode — teachers assign exercises to students
-- [x] Team dashboards with progress tracking
-- [x] Custom exercise builder for educators
+## Phase 4 — Content Internationalization
+- [ ] Auto-translate course content (exercises, scenarios, materials) to RU/ES
+- [ ] Separate translated JSON files per language (`general.ru.json`, `general.es.json`)
+- [ ] Backend serves content based on user's language preference
+- [ ] LLM system prompt adapts to user's language (AI responds in the same language)
+- [ ] Translation review tool — UI for reviewing/editing auto-translated content
+- [ ] Culturally adapted materials where needed (not just literal translation)
 
 ## Phase 5 — Contributor Ecosystem
 - [x] Contribution guidelines and exercise quality standards

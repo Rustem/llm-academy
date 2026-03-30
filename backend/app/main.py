@@ -6,7 +6,7 @@ from sqlalchemy import inspect, text
 
 from app.config import settings
 from app.database import engine, Base
-from app.routers import auth, llm, progress, exercises, templates, leaderboard, profiles, classrooms, certificate, public_api, admin
+from app.routers import auth, llm, progress, exercises, templates, leaderboard, profiles, certificate, public_api, admin
 
 
 def _run_migrations(engine):
@@ -46,7 +46,6 @@ app.include_router(exercises.router)
 app.include_router(templates.router)
 app.include_router(leaderboard.router)
 app.include_router(profiles.router)
-app.include_router(classrooms.router)
 app.include_router(certificate.router)
 app.include_router(public_api.router)
 app.include_router(admin.router)

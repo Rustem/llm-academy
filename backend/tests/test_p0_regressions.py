@@ -222,10 +222,6 @@ class TestAuthRequired:
         resp = client.get("/api/progress")
         assert resp.status_code in (401, 403)
 
-    def test_classrooms_requires_auth(self):
-        resp = client.get("/api/classrooms")
-        assert resp.status_code in (401, 403)
-
     def test_admin_requires_auth(self):
         resp = client.get("/api/admin/stats")
         assert resp.status_code in (401, 403)
