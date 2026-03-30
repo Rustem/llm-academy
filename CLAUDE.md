@@ -28,7 +28,7 @@ backend/app/
   database.py          — SQLAlchemy engine, session, Base
   dependencies.py      — get_current_user, get_user_repo, get_progress_repo
 
-  models/              — SQLAlchemy models (User, CompletedExercise, ExerciseAttempt, Classroom*)
+  models/              — SQLAlchemy models (User, CompletedExercise, ExerciseAttempt)
   schemas/             — Pydantic request/response models
   repositories/        — DB access layer (repository pattern)
   services/            — Business logic
@@ -37,7 +37,7 @@ backend/app/
     progress.py        — get_level(), build_progress_response()
     certificate.py     — PDF generation
   routers/             — Thin HTTP handlers (auth, llm, progress, exercises, templates,
-                         leaderboard, profiles, classrooms, certificate, public_api, admin)
+                         leaderboard, profiles, certificate, public_api, admin)
 
 backend/data/
   courses/             — One JSON file per course (general, medical, education, legal, psychotherapy)
@@ -55,8 +55,7 @@ frontend/src/
   pages/               — Route-level components
     LandingPage, LoginPage, RegisterPage, OnboardingPage,
     CoursesPage, DashboardPage, ExercisePage,
-    LeaderboardPage, ProfilePage, ClassroomsPage,
-    ClassroomDetailPage, AdminPage, PrivacyPage
+    LeaderboardPage, ProfilePage, AdminPage, PrivacyPage
 
   components/          — Reusable UI
     Card, SectionLabel, ErrorAlert, FormInput, Btn,
@@ -68,7 +67,6 @@ frontend/src/
     api.js             — apiFetch() with JWT auto-attach
     courses.js         — fetchExercises(), fetchExercise(), fetchTemplates()
     progress.js        — fetchProgress(), completeExercise(), fetchAttempts()
-    classrooms.js      — fetchClassrooms(), createClassroom(), joinClassroom(), etc.
     llm.js             — testPrompt(), evaluatePrompt()
     auth.js            — login(), register(), getMe(), updateProfile()
 
@@ -145,7 +143,7 @@ Test user: `r.kamun@gmail.com` / `123456`
 
 SQLite by default. 7 tables auto-created on startup. Migrations run in `main.py:_run_migrations()` for schema evolution.
 
-Models: `User`, `CompletedExercise`, `ExerciseAttempt`, `Classroom`, `ClassroomMember`, `ClassroomAssignment`, `ClassroomExercise`.
+Models: `User`, `CompletedExercise`, `ExerciseAttempt`.
 
 ## What to Check After Changes
 

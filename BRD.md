@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary
 
-LLM Academy is a hands-on prompt engineering learning platform for knowledge workers. Unlike theory-heavy courses, users learn by writing real prompts against real AI models and receiving instant AI-powered feedback. The platform serves five professional domains (general business, healthcare, education, legal, psychotherapy) with 115 exercises, multi-language support, classroom management for educators, and a gamified progression system.
+LLM Academy is a hands-on prompt engineering learning platform for knowledge workers. Unlike theory-heavy courses, users learn by writing real prompts against real AI models and receiving instant AI-powered feedback. The platform serves five professional domains (general business, healthcare, education, legal, psychotherapy) with 115 exercises, multi-language support, and a gamified progression system.
 
 ---
 
@@ -108,23 +108,14 @@ Each exercise slot teaches a specific technique — consistent across all 5 cour
 - Copies formatted markdown to clipboard: exercise title, stars, prompt text
 - Backend endpoint for user's saved prompts (`GET /api/progress/prompts`)
 
-### 3.11 Classroom Mode
-
-- **Teachers**: Create classrooms, set course, get 6-character join code
-- **Students**: Join via code
-- **Assignments**: Teacher assigns specific exercises with optional due dates
-- **Progress dashboard**: Per-student XP, level, exercises completed, assignment completion rate
-- **Custom exercise builder**: Teachers author original exercises (scenario, task, hint, criteria, difficulty, XP)
-- Teacher/student role separation
-
-### 3.12 Certificate of Completion
+### 3.11 Certificate of Completion
 
 - PDF generation (landscape A4, dark theme matching app)
 - Requires all 23 exercises completed in a course
 - Shows: username, course title, exercises completed, XP, level, issue date
 - Download as `llm-academy-{course}-certificate.pdf`
 
-### 3.13 Internationalization
+### 3.12 Internationalization
 
 - **3 languages**: English, Russian, Spanish
 - Language switcher in navigation bar
@@ -132,21 +123,21 @@ Each exercise slot teaches a specific technique — consistent across all 5 cour
 - Browser language detection with localStorage persistence
 - Exercise content remains in English (course JSON not translated)
 
-### 3.14 Public API
+### 3.13 Public API
 
 - Read-only REST API at `/api/v1/`
 - No authentication required
 - Endpoints: info, courses, exercises, templates
 - Use case: LMS integration, third-party embedding, content syndication
 
-### 3.15 Admin Dashboard
+### 3.14 Admin Dashboard
 
 - Platform stats: total users, completions, XP, per-course breakdown
 - OpenRouter API usage: daily/weekly/monthly spend, free tier status, credit limits
 - Available models table: name, context window, max output, pricing per 1M tokens, tier badge
 - Admin access restricted by email whitelist
 
-### 3.16 Mobile Responsiveness
+### 3.15 Mobile Responsiveness
 
 - CSS breakpoints at 768px and 480px
 - Exercise page: 2-column → single-column stack on mobile
@@ -162,10 +153,6 @@ Each exercise slot teaches a specific technique — consistent across all 5 cour
 | **users** | User accounts | email, hashed_password, profession, created_at |
 | **completed_exercises** | Active/latest result per exercise | user_id, course_id, exercise_id, stars, xp_earned, prompt_used, attempt_count |
 | **exercise_attempts** | Full attempt history (max 10 per exercise) | user_id, course_id, exercise_id, attempt_number, stars, prompt_used, ai_response, model_used |
-| **classrooms** | Teacher-managed groups | name, teacher_id, course_id, join_code |
-| **classroom_members** | Student/teacher enrollment | classroom_id, user_id, role |
-| **classroom_assignments** | Exercise assignments | classroom_id, exercise_id, course_id, due_date |
-| **classroom_exercises** | Teacher-authored custom exercises | classroom_id, title, scenario, task, hint, criteria, difficulty, xp |
 
 Static content (courses, exercises, materials, templates) stored as JSON files in `backend/data/`.
 
@@ -184,7 +171,6 @@ Static content (courses, exercises, materials, templates) stored as JSON files i
 | Leaderboard | get leaderboard | Public |
 | Profiles | get user profile | Public |
 | Templates | list templates (filterable) | Public |
-| Classrooms | CRUD classrooms, join, assignments, progress, custom exercises | Required |
 | Certificate | download PDF | Required |
 | Admin | platform stats, OpenRouter usage | Admin only |
 
@@ -264,14 +250,12 @@ Environment variables: `SECRET_KEY`, `OPENROUTER_API_KEY`, `DATABASE_URL`, `CORS
 
 ## 10. Roadmap Status
 
-All 6 phases complete (24/24 items):
-
 | Phase | Status |
 |-------|--------|
 | 1. Content & Polish (6 items) | Complete |
-| 2. Internationalization (3 items) | Complete |
+| 2. UI Internationalization (3 items) | Complete |
 | 3. Social & Engagement (3 items) | Complete |
-| 4. Teams & Classrooms (3 items) | Complete |
+| 4. Content Internationalization (6 items) | Planned |
 | 5. Contributor Ecosystem (4 items) | Complete |
 | 6. Platform Growth (5 items) | Complete |
 
