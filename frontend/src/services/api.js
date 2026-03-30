@@ -28,8 +28,12 @@ export async function apiFetch(path, options = {}) {
   });
 
   if (resp.status === 401) {
-    setToken(null);
-    window.location.href = "/login";
+    // Only redirect to login if the user had a token (expired session).
+    // Anonymous requests (no token) should just throw without redirect.
+    if (token) {
+      setToken(null);
+      window.location.href = "/login";
+    }
     throw new Error("Unauthorized");
   }
 

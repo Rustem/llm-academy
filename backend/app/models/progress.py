@@ -9,11 +9,12 @@ from app.database import Base
 class CompletedExercise(Base):
     __tablename__ = "completed_exercises"
     __table_args__ = (
-        UniqueConstraint("user_id", "exercise_id", name="uq_user_exercise"),
+        UniqueConstraint("user_id", "course_id", "exercise_id", name="uq_user_course_exercise"),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    course_id: Mapped[str] = mapped_column(String, nullable=False, default="general")
     exercise_id: Mapped[int] = mapped_column(Integer, nullable=False)
     stars: Mapped[int] = mapped_column(Integer, nullable=False)
     xp_earned: Mapped[int] = mapped_column(Integer, nullable=False)

@@ -1,30 +1,39 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { T, ft, sn } from "../constants/theme";
 import { PROFS } from "../constants/professions";
 import { useAuth } from "../hooks/useAuth";
 import { updateProfile } from "../services/auth";
 
+const PROF_TO_COURSE = {
+  medical: "medical",
+  legal: "legal",
+  education: "education",
+};
+
 export default function OnboardingPage() {
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
+  const { t } = useTranslation();
 
   const selectProfession = async (profId) => {
     await updateProfile({ profession: profId });
     await refreshUser();
-    navigate("/dashboard");
+    const courseId = PROF_TO_COURSE[profId] || "general";
+    navigate(`/course/${courseId}`);
   };
 
   return (
     <div style={{ background: T.bg, minHeight: "100vh", fontFamily: sn }}>
       <div style={{ maxWidth: 580, margin: "0 auto", padding: "72px 24px" }}>
         <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: T.ac, marginBottom: 10 }}>
-          Before we start
+          {t("onboarding.beforeWeStart")}
         </p>
         <h2 style={{ fontFamily: ft, fontSize: 32, color: T.text, fontWeight: 400, margin: "0 0 6px" }}>
-          What's your field?
+          {t("onboarding.whatsYourField")}
         </h2>
         <p style={{ fontSize: 14, color: T.tm, margin: "0 0 30px", lineHeight: 1.6 }}>
-          Helps frame exercises around your work.
+          {t("onboarding.subtitle")}
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 8 }}>
           {PROFS.map(p => (

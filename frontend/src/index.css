@@ -14,3 +14,80 @@ body {
 #root {
   min-height: 100vh;
 }
+
+/* Markdown response styles */
+.md-response p { margin: 0 0 8px; }
+.md-response ul, .md-response ol { margin: 4px 0 8px; padding-left: 20px; }
+.md-response li { margin-bottom: 2px; }
+.md-response h1, .md-response h2, .md-response h3, .md-response h4 {
+  color: #e8edf5; margin: 12px 0 6px; font-weight: 600;
+}
+.md-response h1 { font-size: 18px; }
+.md-response h2 { font-size: 16px; }
+.md-response h3 { font-size: 14px; }
+.md-response strong { color: #e8edf5; font-weight: 600; }
+.md-response code {
+  background: #1a2130; color: #0a84ff; padding: 1px 5px; border-radius: 3px;
+  font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px;
+}
+.md-response pre {
+  background: #1a2130; border: 1px solid #1f2937; border-radius: 6px;
+  padding: 12px; overflow-x: auto; margin: 8px 0;
+}
+.md-response pre code { background: none; padding: 0; color: #e8edf5; }
+.md-response table {
+  border-collapse: collapse; width: 100%; margin: 8px 0; font-size: 12px;
+}
+.md-response th, .md-response td {
+  border: 1px solid #1f2937; padding: 6px 10px; text-align: left;
+}
+.md-response th { background: #1a2130; color: #8b98b0; font-weight: 600; }
+.md-response blockquote {
+  border-left: 3px solid #0a84ff; margin: 8px 0; padding: 4px 12px; color: #8b98b0;
+}
+.md-response hr { border: none; border-top: 1px solid #1f2937; margin: 12px 0; }
+.md-response a { color: #0a84ff; text-decoration: underline; text-underline-offset: 3px; }
+.md-response img { max-width: 100%; border-radius: 6px; }
+.md-response del { color: #5a6b85; }
+.md-response input[type="checkbox"] { margin-right: 6px; }
+
+/* Responsive: mobile breakpoints */
+@media (max-width: 768px) {
+  /* Exercise page: stack columns on mobile */
+  [data-layout="exercise-grid"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Reduce container padding on small screens */
+  [data-container] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Courses grid: single column on mobile */
+  [data-layout="courses-grid"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Exercise cards grid: fewer columns */
+  [data-layout="exercise-cards"] {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
+  }
+
+  /* Stats row: wrap better */
+  [data-layout="stats"] {
+    gap: 16px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Even tighter on very small screens */
+  [data-container] {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  [data-layout="exercise-cards"] {
+    grid-template-columns: 1fr !important;
+  }
+}

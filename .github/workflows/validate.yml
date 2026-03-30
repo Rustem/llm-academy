@@ -1,0 +1,103 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  validate-exercises:
+    name: Validate Exercises
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate exercise JSON files
+        run: python3 scripts/validate_exercises.py
+
+  test-backend:
+    name: Test Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: cd backend && pip install -r requirements.txt
+
+      - name: Test API endpoints
+        run: |
+          cd backend
+          python3 -c "
+          from app.main import app
+          from fastapi.testclient import TestClient
+          client = TestClient(app)
+          assert client.get('/api/health').status_code == 200
+          assert client.get('/api/courses').status_code == 200
+          courses = client.get('/api/courses').json()
+          assert len(courses) >= 5
+          for c in courses:
+              resp = client.get(f'/api/courses/{c[\"id\"]}/exercises')
+              assert resp.status_code == 200
+              assert len(resp.json()) == 23, f'{c[\"id\"]} has {len(resp.json())} exercises'
+          assert client.get('/api/templates').status_code == 200
+          assert client.get('/api/leaderboard').status_code == 200
+          assert client.get('/api/v1/info').status_code == 200
+          print('All API tests passed')
+          "
+
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: cd frontend && npm ci
+
+      - name: Build
+        run: cd frontend && npm run build
+
+      - name: Upload build artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
+
+  build-docker:
+    name: Build Docker Images
+    needs: [validate-exercises, test-backend, build-frontend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build backend image
+        run: docker build -t llm-academy-backend ./backend
+
+      - name: Build frontend image
+        run: docker build -t llm-academy-frontend ./frontend
+
+      - name: Verify containers start
+        run: |
+          docker run -d --name backend-test -p 8000:8000 llm-academy-backend
+          sleep 3
+          curl -sf http://localhost:8000/api/health || (docker logs backend-test && exit 1)
+          docker stop backend-test
+          echo "Docker images build and run successfully"

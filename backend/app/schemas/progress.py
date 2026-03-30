@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 class CompleteExerciseReq(BaseModel):
     exercise_id: int
+    course_id: str = "general"
     stars: int
     xp_earned: int
     prompt_used: str | None = None

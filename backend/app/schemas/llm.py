@@ -16,6 +16,7 @@ class ChatResp(BaseModel):
 
 class EvaluateReq(BaseModel):
     exercise_id: int
+    course_id: str = "general"
     user_prompt: str
     ai_response: str
     model: str = "meta-llama/llama-3.3-70b-instruct:free"

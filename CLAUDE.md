@@ -16,14 +16,15 @@ Frontend proxies `/api` requests to backend via Vite dev server config.
 - **Dependency injection** via FastAPI's `Depends()`. See `dependencies.py` for `get_current_user`, `get_user_repo`, `get_progress_repo`.
 - **Auth**: bcrypt for password hashing (direct, not passlib), python-jose for JWT. Token in Authorization header.
 - **LLM proxy**: `services/llm.py` calls OpenRouter with server-side API key via httpx. Never expose API keys to frontend.
-- **Exercises** are static JSON in `data/exercises.json`, not in the DB.
+- **Courses & Exercises** are static JSON in `data/courses/*.json` (one file per course: general, medical, education, legal, psychotherapy). Not in the DB.
 
 ### Frontend
 
 - **No CSS framework** — all inline styles using theme constants from `constants/theme.js`.
 - **Auth state** managed via React Context (`context/AuthContext.jsx`), consumed via `useAuth()` hook.
 - **API calls** go through `services/api.js` which auto-attaches JWT and handles 401 redirects.
-- **Progress state** via `useProgress()` hook which wraps the progress API.
+- **Progress state** via `useProgress(courseId)` hook which wraps the progress API (course-scoped).
+- **Multi-course**: 5 domain courses, same 3-module structure each. General course accessible without auth. Routes: `/courses`, `/course/:courseId`, `/course/:courseId/exercise/:id`.
 
 ## Coding Guidelines
 
@@ -56,7 +57,7 @@ cd backend && uvicorn app.main:app --reload &
 cd frontend && npm run dev &
 ```
 
-Wait for both to be ready: `curl -s http://localhost:8000/api/exercises | head -c 50` and `curl -s http://localhost:5173 | head -c 50`.
+Wait for both to be ready: `curl -s http://localhost:8000/api/courses | head -c 50` and `curl -s http://localhost:5173 | head -c 50`.
 
 ### 2. Run smoke tests
 
@@ -68,7 +69,9 @@ Tests log in with test user `r.kamun@gmail.com` / `123456`, verify dashboard and
 
 ### 3. What to check
 
-- Login redirects to `/dashboard` (or `/onboarding` if no profession set)
-- Dashboard shows all 3 modules and 23 exercises
+- Login redirects to `/courses` (or `/onboarding` if no profession set)
+- Courses page shows all 5 domain courses
+- Course dashboard shows 3 modules and 23 exercises per course
+- General course (`/course/general`) accessible without login
 - Exercise page shows scenario, task, prompt input, model selector, and "Test my prompt" button
 - If testing LLM flow: write a prompt, click "Test my prompt", verify AI response appears, then evaluate

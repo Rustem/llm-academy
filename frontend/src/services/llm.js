@@ -12,11 +12,12 @@ export async function testPrompt(systemPrompt, userMessage, model) {
   return data.content;
 }
 
-export async function evaluatePrompt(exerciseId, userPrompt, aiResponse, model) {
+export async function evaluatePrompt(exerciseId, userPrompt, aiResponse, model, courseId = "general") {
   return apiFetch("/llm/evaluate", {
     method: "POST",
     body: JSON.stringify({
       exercise_id: exerciseId,
+      course_id: courseId,
       user_prompt: userPrompt,
       ai_response: aiResponse,
       model,

@@ -1,34 +1,36 @@
-import json
-from pathlib import Path
+from fastapi import APIRouter
 
-from fastapi import APIRouter, HTTPException
+from app.services.course_loader import load_course, list_all_courses, get_exercise
 
-router = APIRouter(prefix="/api/exercises", tags=["exercises"])
-
-DATA_DIR = Path(__file__).parent.parent.parent / "data"
+router = APIRouter(tags=["exercises"])
 
 
-def load_exercises() -> list[dict]:
-    with open(DATA_DIR / "exercises.json") as f:
-        return json.load(f)["exercises"]
+# ── Course endpoints ───────────────────────────────────────────
+
+@router.get("/api/courses")
+def list_courses():
+    return list_all_courses()
 
 
-def load_materials() -> dict:
-    with open(DATA_DIR / "exercises.json") as f:
-        return json.load(f).get("materials", {})
+@router.get("/api/courses/{course_id}/exercises")
+def list_course_exercises(course_id: str):
+    data = load_course(course_id)
+    return data["exercises"]
 
 
-@router.get("")
+@router.get("/api/courses/{course_id}/exercises/{exercise_id}")
+def get_course_exercise(course_id: str, exercise_id: int):
+    return get_exercise(course_id, exercise_id)
+
+
+# ── Backward-compat: /api/exercises → general course ──────────
+
+@router.get("/api/exercises")
 def list_exercises():
-    return load_exercises()
+    data = load_course("general")
+    return data["exercises"]
 
 
-@router.get("/{exercise_id}")
-def get_exercise(exercise_id: int):
-    exercises = load_exercises()
-    exercise = next((e for e in exercises if e["id"] == exercise_id), None)
-    if not exercise:
-        raise HTTPException(status_code=404, detail="Exercise not found")
-    materials = load_materials()
-    exercise["material"] = materials.get(str(exercise_id))
-    return exercise
+@router.get("/api/exercises/{exercise_id}")
+def get_exercise_compat(exercise_id: int):
+    return get_exercise("general", exercise_id)

@@ -1,0 +1,175 @@
+{
+  "templates": [
+    {
+      "id": "cot-basic",
+      "name": "Step-by-step reasoning",
+      "technique": "chain-of-thought",
+      "description": "Force the AI to think through a problem step by step before answering.",
+      "content": "Before giving your final answer, think through this step by step:\n\nStep 1: [First, identify/extract the key information]\nStep 2: [Then, analyze/compare against criteria]\nStep 3: [Next, evaluate/score each element]\nStep 4: [Finally, synthesize into a recommendation]\n\nShow your reasoning for each step.",
+      "courses": ["general", "medical", "education", "legal", "psychotherapy"],
+      "modules": [2, 3]
+    },
+    {
+      "id": "few-shot",
+      "name": "Few-shot examples",
+      "technique": "few-shot",
+      "description": "Teach the AI by showing input-output examples before the actual task.",
+      "content": "Here are examples of how to [TASK]:\n\nExample 1:\nInput: [example input]\nOutput: [example output]\n\nExample 2:\nInput: [example input]\nOutput: [example output]\n\nExample 3:\nInput: [example input]\nOutput: [example output]\n\nNow apply the same pattern to:\nInput: [actual input]\nOutput:",
+      "courses": ["general", "medical", "education", "legal", "psychotherapy"],
+      "modules": [2, 3]
+    },
+    {
+      "id": "structured-table",
+      "name": "Structured table output",
+      "technique": "structured-output",
+      "description": "Enforce a specific table format for the AI's response.",
+      "content": "Analyze the following and present your findings in this exact table format:\n\n| [Column 1] | [Column 2] | [Column 3] | [Column 4] |\n|---|---|---|---|\n\nFor each row:\n- [Column 1]: [what goes here]\n- [Column 2]: [what goes here]\n- [Column 3]: [criteria for this field]\n- [Column 4]: [what goes here]\n\nAfter the table, provide a summary of key findings.",
+      "courses": ["general", "medical", "education", "legal", "psychotherapy"],
+      "modules": [2, 3]
+    },
+    {
+      "id": "role-expert",
+      "name": "Expert role assignment",
+      "technique": "role-assignment",
+      "description": "Assign a specific expert role to shape the AI's perspective and expertise.",
+      "content": "You are a [specific role] with [X years] of experience in [domain]. Your expertise includes [key skills].\n\nFrom this professional perspective, [task]. Focus on:\n- [Aspect 1 this role would prioritize]\n- [Aspect 2 this role would catch]\n- [Aspect 3 unique to this expertise]\n\nProvide your analysis in a professional tone appropriate for [audience].",
+      "courses": ["general", "medical", "education", "legal", "psychotherapy"],
+      "modules": [1, 2, 3]
+    },
+    {
+      "id": "constraints-neg",
+      "name": "Constraint-based prompt",
+      "technique": "constraints",
+      "description": "Set explicit boundaries on what to include, exclude, and how to format.",
+      "content": "Write [deliverable] with these constraints:\n\nINCLUDE:\n- [Required element 1]\n- [Required element 2]\n- [Required element 3]\n\nEXCLUDE:\n- [What NOT to include]\n- [What to avoid]\n\nFORMAT:\n- Length: [word count or page range]\n- Structure: [sections/format]\n- Tone: [formal/casual/technical]\n\nAudience: [who will read this]",
+      "courses": ["general", "medical", "education", "legal", "psychotherapy"],
+      "modules": [1, 2, 3]
+    },
+    {
+      "id": "iterative-fix",
+      "name": "Iterative refinement",
+      "technique": "refinement",
+      "description": "Fix a bad AI response by pointing out specific problems.",
+      "content": "Your previous response has these problems:\n\n1. [Specific problem]: [What's wrong and why]\n2. [Specific problem]: [What's wrong and why]\n3. [Specific problem]: [What's wrong and why]\n\nPlease revise with these corrections:\n- [Specific fix for problem 1]\n- [Specific fix for problem 2]\n- [Specific fix for problem 3]\n\nKeep [what was good about the original]. Change [what needs to change].",
+      "courses": ["general", "medical", "education", "legal", "psychotherapy"],
+      "modules": [1, 2, 3]
+    },
+    {
+      "id": "spec-plan",
+      "name": "Detailed specification",
+      "technique": "planning",
+      "description": "Write a comprehensive spec before asking the AI to produce output.",
+      "content": "I need you to create [deliverable].\n\nPURPOSE: [Why this is needed]\nAUDIENCE: [Who will read/use it]\n\nREQUIRED SECTIONS:\n1. [Section name] — [what it covers, approximate length]\n2. [Section name] — [what it covers, approximate length]\n3. [Section name] — [what it covers, approximate length]\n\nDATA SOURCES: [Where information comes from]\nTONE: [Professional/casual/technical]\nLENGTH: [Total word count or pages]\n\nEXCLUSIONS: Do not include [what to skip]\nSUCCESS CRITERIA: [How I'll know this is good]",
+      "courses": ["general", "medical", "education", "legal", "psychotherapy"],
+      "modules": [1, 2, 3]
+    },
+    {
+      "id": "compare-eval",
+      "name": "Compare and evaluate",
+      "technique": "evaluation",
+      "description": "Score multiple options against defined criteria.",
+      "content": "Compare the following options and evaluate each against these criteria:\n\nOptions:\n- Option A: [description]\n- Option B: [description]\n\nCriteria (score 1-5 each):\n1. [Criterion 1]: [what makes a 5 vs a 1]\n2. [Criterion 2]: [what makes a 5 vs a 1]\n3. [Criterion 3]: [what makes a 5 vs a 1]\n\nFor each option:\n- Score each criterion with justification\n- Calculate total score\n- Note key strengths and weaknesses\n\nEnd with a recommendation and reasoning.",
+      "courses": ["general", "medical", "education", "legal", "psychotherapy"],
+      "modules": [2, 3]
+    },
+    {
+      "id": "decompose",
+      "name": "Multi-step decomposition",
+      "technique": "decomposition",
+      "description": "Break a complex task into a sequence of focused prompts.",
+      "content": "This is prompt [N] of [total] in a sequence.\n\nPREVIOUS CONTEXT:\n[Summary of what was produced in earlier steps]\n\nCURRENT STEP:\n[Focused objective for this step only]\n\nINPUT:\n[Data or output from previous step]\n\nOUTPUT FORMAT:\n[Exactly what this step should produce]\n\nThis output will be used in the next step to [what comes next].",
+      "courses": ["general", "medical", "education", "legal", "psychotherapy"],
+      "modules": [2, 3]
+    },
+    {
+      "id": "persona-multi",
+      "name": "Multi-persona analysis",
+      "technique": "persona",
+      "description": "Have the AI analyze from multiple professional perspectives.",
+      "content": "Analyze the following from three different perspectives:\n\nPERSPECTIVE 1 — [Role] ([focus area]):\n- What would a [role] prioritize?\n- What concerns would they raise?\n- What would they recommend?\n\nPERSPECTIVE 2 — [Role] ([focus area]):\n- [Same structure]\n\nPERSPECTIVE 3 — [Role] ([focus area]):\n- [Same structure]\n\nSYNTHESIS:\nCombine all three perspectives into a unified assessment with prioritized recommendations.",
+      "courses": ["general", "medical", "education", "legal", "psychotherapy"],
+      "modules": [2, 3]
+    },
+    {
+      "id": "template-reusable",
+      "name": "Reusable template with variables",
+      "technique": "templates",
+      "description": "Create a prompt template with bracket variables for repeated tasks.",
+      "content": "TASK: [TASK_DESCRIPTION]\nDATA: [DATA_SOURCE]\nPERIOD: [TIME_PERIOD]\n\nProcess the [DATA_SOURCE] for [TIME_PERIOD] and:\n1. Categorize into: [CATEGORY_1], [CATEGORY_2], [CATEGORY_3]\n2. Summarize key findings\n3. Create action items for [RECIPIENT]\n\nOutput format: [FORMAT_DESCRIPTION]\nPriority: Flag anything that needs attention within [URGENCY_WINDOW]",
+      "courses": ["general", "medical", "education", "legal", "psychotherapy"],
+      "modules": [2, 3]
+    },
+    {
+      "id": "med-soap",
+      "name": "SOAP note prompt",
+      "technique": "structured-output",
+      "description": "Generate structured clinical notes in SOAP format.",
+      "content": "Document this patient encounter in SOAP format:\n\nS (Subjective): Summarize the patient's chief complaint, history of present illness, and reported symptoms in their own words.\n\nO (Objective): List vital signs, physical exam findings, lab results, and other measurable data.\n\nA (Assessment): Provide your clinical assessment including differential diagnoses ranked by likelihood with reasoning.\n\nP (Plan): Outline the treatment plan including medications, follow-up, referrals, and patient education.\n\nUse standard medical abbreviations. Flag any critical values or red flags.",
+      "courses": ["medical"],
+      "modules": [1, 2, 3]
+    },
+    {
+      "id": "med-ddx",
+      "name": "Differential diagnosis reasoning",
+      "technique": "chain-of-thought",
+      "description": "Step through differential diagnosis with systematic reasoning.",
+      "content": "Given the following patient presentation, work through the differential diagnosis:\n\nStep 1: List all symptoms, signs, and relevant history\nStep 2: Generate a differential diagnosis list (most likely to least likely)\nStep 3: For each diagnosis, state:\n  - Supporting evidence from the presentation\n  - Evidence against\n  - Key test that would confirm or rule out\nStep 4: Recommend the most appropriate next steps in workup\nStep 5: Identify any red flags requiring immediate action\n\nPresent findings in a structured clinical format.",
+      "courses": ["medical"],
+      "modules": [2, 3]
+    },
+    {
+      "id": "edu-lesson",
+      "name": "Lesson plan generator",
+      "technique": "planning",
+      "description": "Create a structured, standards-aligned lesson plan.",
+      "content": "Create a lesson plan with these specifications:\n\nSUBJECT: [subject]\nGRADE LEVEL: [grade]\nSTANDARDS: [CCSS/NGSS reference]\nDURATION: [time]\n\nInclude:\n1. Learning Objectives (use action verbs from Bloom's taxonomy)\n2. Materials needed\n3. Warm-up/Hook (5 min) — engage students\n4. Direct Instruction (10-15 min) — key concepts\n5. Guided Practice (15 min) — structured activity\n6. Independent Practice (10 min) — student work\n7. Assessment — how you'll check understanding\n8. Differentiation — modifications for advanced, on-level, and struggling learners\n9. Closure (5 min) — summarize and preview next lesson",
+      "courses": ["education"],
+      "modules": [1, 2, 3]
+    },
+    {
+      "id": "edu-rubric",
+      "name": "Assessment rubric builder",
+      "technique": "structured-output",
+      "description": "Create a detailed scoring rubric for student work.",
+      "content": "Create a rubric for [assignment type] with these specifications:\n\nCriteria (4-6 categories):\n| Criterion | Exemplary (4) | Proficient (3) | Developing (2) | Beginning (1) |\n|---|---|---|---|---|\n| [Criterion 1] | [description] | [description] | [description] | [description] |\n\nFor each level, describe specific, observable behaviors — not vague terms like 'good' or 'poor'.\n\nInclude:\n- Total points possible\n- Grade scale mapping\n- Student-friendly language version",
+      "courses": ["education"],
+      "modules": [2, 3]
+    },
+    {
+      "id": "legal-clause",
+      "name": "Contract clause analysis",
+      "technique": "structured-output",
+      "description": "Systematically analyze contract clauses for risk.",
+      "content": "Review the following contract and analyze each clause:\n\n| Clause | Section | Risk Level (High/Med/Low) | Issue | Recommended Change |\n|---|---|---|---|---|\n\nRisk Level Criteria:\n- HIGH: Exposes client to significant financial/legal liability\n- MEDIUM: Unfavorable terms that should be negotiated\n- LOW: Standard terms, acceptable as-is\n\nAfter the table:\n1. Summarize the top 3 risks requiring immediate attention\n2. List any missing clauses that should be added\n3. Note any ambiguous language that needs clarification\n\nJurisdiction: [state/country]",
+      "courses": ["legal"],
+      "modules": [2, 3]
+    },
+    {
+      "id": "legal-memo",
+      "name": "Legal research memo",
+      "technique": "planning",
+      "description": "Structure a legal research memorandum.",
+      "content": "Draft a legal research memorandum:\n\nTO: [recipient]\nFROM: [author]\nRE: [subject matter]\nDATE: [date]\n\nI. QUESTION PRESENTED\n[Concise legal question in one sentence]\n\nII. SHORT ANSWER\n[Brief answer in 2-3 sentences]\n\nIII. STATEMENT OF FACTS\n[Relevant facts, neutrally stated]\n\nIV. DISCUSSION\n[Analysis applying law to facts, cite relevant statutes and case law]\n\nV. CONCLUSION\n[Recommendation with reasoning]\n\nJurisdiction: [applicable jurisdiction]\nKey statutes: [relevant statutes to consider]",
+      "courses": ["legal"],
+      "modules": [1, 2, 3]
+    },
+    {
+      "id": "psy-treatment",
+      "name": "Treatment plan framework",
+      "technique": "structured-output",
+      "description": "Generate a structured treatment plan for therapy.",
+      "content": "Develop a treatment plan based on the following:\n\nCLIENT INFORMATION: [demographics, presenting concern]\nDIAGNOSIS: [DSM-5 diagnosis]\nMODALITY: [CBT/DBT/ACT/psychodynamic/other]\n\nTreatment Plan:\n1. Problem List (prioritized)\n2. Treatment Goals (SMART format — Specific, Measurable, Achievable, Relevant, Time-bound)\n3. Objectives for each goal (behavioral, measurable)\n4. Interventions (evidence-based, specific to modality)\n5. Frequency and duration of sessions\n6. Outcome measures (PHQ-9, GAD-7, etc.)\n7. Crisis/safety plan if applicable\n8. Review date\n\nEnsure goals are collaborative and strength-based.",
+      "courses": ["psychotherapy"],
+      "modules": [1, 2, 3]
+    },
+    {
+      "id": "psy-distortions",
+      "name": "Cognitive distortion identifier",
+      "technique": "few-shot",
+      "description": "Identify cognitive distortions using examples.",
+      "content": "Identify cognitive distortions in the following statements using these examples:\n\nExample 1:\nStatement: \"I failed one test, so I'll never succeed in school.\"\nDistortion: Overgeneralization — drawing broad conclusions from a single event\n\nExample 2:\nStatement: \"My friend didn't text back, so she must hate me.\"\nDistortion: Mind reading — assuming you know what others think without evidence\n\nExample 3:\nStatement: \"If I don't get this promotion, my career is over.\"\nDistortion: Catastrophizing — expecting the worst possible outcome\n\nNow analyze these statements:\n[Paste client statements here]\n\nFor each, identify:\n1. The specific cognitive distortion\n2. The underlying thought pattern\n3. A suggested reframe using [CBT/DBT] principles",
+      "courses": ["psychotherapy"],
+      "modules": [2, 3]
+    }
+  ]
+}

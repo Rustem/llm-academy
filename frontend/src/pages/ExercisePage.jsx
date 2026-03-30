@@ -1,25 +1,35 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { T, ft, sn } from "../constants/theme";
-import { EX } from "../constants/exercises";
+import { COURSES } from "../constants/courses";
 import { MODS } from "../constants/modules";
-import { MODELS } from "../constants/models";
+import { MODELS, MODEL_GROUPS } from "../constants/models";
 import { useAuth } from "../hooks/useAuth";
 import { useProgress } from "../hooks/useProgress";
 import { testPrompt, evaluatePrompt } from "../services/llm";
-import materialsData from "../materials.json";
+import { fetchExercises, fetchExercise, fetchTemplates } from "../services/courses";
 import NavBar from "../components/NavBar";
 import Btn from "../components/Btn";
+import Card from "../components/Card";
+import SectionLabel from "../components/SectionLabel";
+import ErrorAlert from "../components/ErrorAlert";
 import AdPlaceholder from "../components/AdPlaceholder";
 import EvalResult from "../components/EvalResult";
+import ResponseSection from "../components/ResponseSection";
+import TemplatePanel from "../components/TemplatePanel";
+import MaterialPanel from "../components/MaterialPanel";
 
 export default function ExercisePage() {
-  const { id } = useParams();
+  const { courseId, id } = useParams();
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
-  const { progress, complete } = useProgress();
+  const { t } = useTranslation();
+  const { progress, complete } = useProgress(courseId);
 
-  const sel = EX.find(e => e.id === parseInt(id));
+  const [exercises, setExercises] = useState([]);
+  const [sel, setSel] = useState(null);
+  const [material, setMaterial] = useState(null);
   const [prompt, setPrompt] = useState("");
   const [resp, setResp] = useState("");
   const [ev, setEv] = useState(null);
@@ -27,70 +37,63 @@ export default function ExercisePage() {
   const [evaling, setEvaling] = useState(false);
   const [hint, setHint] = useState(false);
   const [showMat, setShowMat] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [model, setModel] = useState(MODELS[0].id);
+  const [showTemplates, setShowTemplates] = useState(false);
+  const [templates, setTemplates] = useState([]);
+  const [error, setError] = useState(null);
 
-  useEffect(() => { window.scrollTo(0, 0); }, [id]);
+  const course = COURSES.find(c => c.id === courseId);
 
-  if (!sel) return null;
+  useEffect(() => { fetchExercises(courseId).then(setExercises).catch(() => {}); }, [courseId]);
+  useEffect(() => { fetchExercise(courseId, id).then(d => { setSel(d); setMaterial(d.material || null); }).catch(() => {}); }, [courseId, id]);
+  useEffect(() => { fetchTemplates(courseId).then(setTemplates).catch(() => {}); }, [courseId]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    setPrompt(""); setResp(""); setEv(null); setError(null);
+    setHint(false); setShowMat(false); setShowTemplates(false);
+  }, [id]);
+
+  if (!sel || !course) return null;
 
   const done = progress.completed || {};
   const mod = MODS.find(m => m.id === sel.m);
   const c = T[mod.color];
-  const me = EX.filter(e => e.m === sel.m);
+  const me = exercises.filter(e => e.m === sel.m);
   const idx = me.findIndex(e => e.id === sel.id);
-  const nx = me[idx + 1] || EX.find(e => !done[e.id] && e.id > sel.id);
+  const nx = me[idx + 1] || exercises.find(e => !done[e.id] && e.id > sel.id);
 
   const test = async () => {
     if (!prompt.trim()) return;
-    setLoading(true); setResp(""); setEv(null);
+    setLoading(true); setResp(""); setEv(null); setError(null);
     try {
-      const content = await testPrompt(
-        "You are a helpful AI assistant. Respond naturally and concisely (under 300 words). Follow any format specified.",
-        prompt, model
-      );
-      setResp(content);
-    } catch {
-      setResp("Error. Try again.");
-    }
+      setResp(await testPrompt("You are a helpful AI assistant. Respond naturally and concisely (under 300 words). Follow any format specified.", prompt, model));
+    } catch (e) { setError(e.message); }
     setLoading(false);
   };
 
   const evaluate = async () => {
     if (!resp || !sel) return;
-    setEvaling(true);
+    setEvaling(true); setError(null);
     try {
-      const result = await evaluatePrompt(sel.id, prompt, resp, model);
+      const result = await evaluatePrompt(sel.id, prompt, resp, model, courseId);
       setEv(result);
       if (result.stars >= 3 && !done[sel.id]) {
-        const xe = result.stars >= 4 ? sel.xp : Math.floor(sel.xp * 0.7);
-        await complete(sel.id, result.stars, xe, prompt);
+        await complete(sel.id, result.stars, result.stars >= 4 ? sel.xp : Math.floor(sel.xp * 0.7), prompt);
         await refreshUser();
       }
-    } catch {
-      setEv({ stars: 0, feedback: "Evaluation failed.", strengths: [], improvements: [], tip: "" });
-    }
+    } catch (e) { setError(e.message); }
     setEvaling(false);
-  };
-
-  const copyMaterial = () => {
-    const mat = materialsData[sel.id];
-    if (mat) {
-      navigator.clipboard.writeText(mat);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
   };
 
   return (
     <div style={{ background: T.bg, minHeight: "100vh", fontFamily: sn }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px" }}>
-        <NavBar back backTo="/dashboard" />
+      <div data-container style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px" }}>
+        <NavBar back backTo={`/course/${courseId}`} />
 
         <div style={{ marginBottom: 28 }}>
           <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 6, flexWrap: "wrap" }}>
             <span style={{ background: c.bg, color: c.text, fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", padding: "3px 8px", borderRadius: 4 }}>
-              Module {mod.id}
+              {t("dashboard.module")} {mod.id}
             </span>
             <span style={{ fontSize: 11, color: T.td }}>{sel.d}</span>
             <span style={{ fontSize: 11, color: c.text, fontWeight: 600 }}>+{sel.xp} XP</span>
@@ -100,68 +103,41 @@ export default function ExercisePage() {
           </h2>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, alignItems: "start" }}>
+        <div data-layout="exercise-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, alignItems: "start" }}>
           {/* Left column */}
           <div>
-            <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 10, padding: 22, marginBottom: 12, boxShadow: T.shadow }}>
-              <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: T.td, margin: "0 0 8px" }}>Scenario</p>
+            <Card style={{ marginBottom: 12 }}>
+              <SectionLabel>{t("exercise.scenario")}</SectionLabel>
               <p style={{ fontSize: 13, color: T.text, lineHeight: 1.75, margin: 0, whiteSpace: "pre-line" }}>{sel.sc}</p>
-            </div>
-            <div style={{ background: c.bg, border: `1px solid ${c.border}`, borderRadius: 10, padding: 22, marginBottom: 12, boxShadow: T.shadow }}>
-              <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: c.text, margin: "0 0 8px" }}>Your task</p>
+            </Card>
+            <Card style={{ marginBottom: 12, background: c.bg, borderColor: c.border }}>
+              <SectionLabel color={c.text}>{t("exercise.yourTask")}</SectionLabel>
               <p style={{ fontSize: 13, color: T.text, lineHeight: 1.75, margin: 0 }}>{sel.task}</p>
-            </div>
+            </Card>
             <AdPlaceholder slot="exercise-left" height={100} />
-            <div style={{ display: "flex", gap: 16 }}>
-              <button onClick={() => setHint(!hint)} style={{ background: "none", border: "none", fontFamily: sn, fontSize: 12, color: T.tm, cursor: "pointer", padding: "3px 0", textDecoration: "underline", textUnderlineOffset: 3 }}>
-                {hint ? "Hide hint" : "Show hint"}
-              </button>
-              {materialsData[sel.id] && (
-                <button onClick={() => setShowMat(!showMat)} style={{ background: "none", border: "none", fontFamily: sn, fontSize: 12, color: T.ac, cursor: "pointer", padding: "3px 0", textDecoration: "underline", textUnderlineOffset: 3 }}>
-                  {showMat ? "Hide material" : "Show sample material"}
-                </button>
-              )}
-            </div>
-            {hint && (
-              <div style={{ background: T.bgEl, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginTop: 6 }}>
-                <p style={{ fontSize: 12, color: T.tm, lineHeight: 1.65, margin: 0 }}>{sel.hint}</p>
-              </div>
-            )}
-            {showMat && materialsData[sel.id] && (
-              <div style={{ background: T.bgEl, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginTop: 6, position: "relative" }}>
-                <button onClick={copyMaterial} style={{
-                  position: "absolute", top: 12, right: 12,
-                  background: copied ? T.okBg : T.bgCard, border: `1px solid ${copied ? T.ok : T.border}`,
-                  borderRadius: 6, padding: "6px 12px", fontFamily: sn, fontSize: 11, fontWeight: 600,
-                  color: copied ? T.ok : T.tm, cursor: "pointer",
-                }}>
-                  {copied ? "Copied!" : "Copy"}
-                </button>
-                <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: T.ac, margin: "0 0 8px" }}>
-                  Sample Material
-                </p>
-                <pre style={{ fontSize: 12, color: T.text, lineHeight: 1.65, margin: 0, whiteSpace: "pre-wrap", fontFamily: sn, paddingRight: 80 }}>
-                  {materialsData[sel.id]}
-                </pre>
-              </div>
-            )}
+            <MaterialPanel material={material} hint={sel.hint} showHint={hint} showMat={showMat} onToggleHint={() => setHint(!hint)} onToggleMat={() => setShowMat(!showMat)} />
           </div>
 
           {/* Right column */}
           <div>
-            <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 10, padding: 22, marginBottom: 12, boxShadow: T.shadow }}>
+            <Card style={{ marginBottom: 12 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: T.td, margin: 0 }}>Your prompt</p>
+                <SectionLabel style={{ margin: 0 }}>{t("exercise.yourPrompt")}</SectionLabel>
                 <select value={model} onChange={e => setModel(e.target.value)} style={{
                   fontFamily: sn, fontSize: 11, color: T.text, background: T.bgEl,
                   border: `1px solid ${T.border}`, borderRadius: 6, padding: "4px 8px", outline: "none", cursor: "pointer",
                 }}>
-                  {MODELS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+                  {MODEL_GROUPS.map(g => (
+                    <optgroup key={g.label} label={g.label}>
+                      {g.models.map(m => <option key={m.id} value={m.id}>{m.name} ({m.provider})</option>)}
+                    </optgroup>
+                  ))}
                 </select>
               </div>
+              <TemplatePanel templates={templates} show={showTemplates} onToggle={() => setShowTemplates(!showTemplates)} onSelect={t => { setPrompt(t); setShowTemplates(false); }} moduleId={sel.m} />
               <textarea
                 value={prompt} onChange={e => setPrompt(e.target.value)}
-                placeholder="Write your prompt here..." rows={8}
+                placeholder={t("exercise.placeholder")} rows={8}
                 style={{
                   width: "100%", fontFamily: sn, fontSize: 13, lineHeight: 1.7, color: T.text,
                   border: `1px solid ${T.border}`, borderRadius: 6, padding: 12, resize: "vertical",
@@ -172,37 +148,26 @@ export default function ExercisePage() {
               />
               <div style={{ marginTop: 10 }}>
                 <Btn onClick={test} disabled={!prompt.trim() || loading}>
-                  {loading ? "Running..." : "Test my prompt"}
+                  {loading ? t("exercise.running") : t("exercise.testMyPrompt")}
                 </Btn>
               </div>
-            </div>
+            </Card>
 
-            {(resp || loading) && (
-              <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 10, padding: 22, marginBottom: 12, boxShadow: T.shadow }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                  <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: T.td, margin: 0 }}>AI response</p>
-                  <span style={{ fontSize: 10, color: T.td, fontFamily: sn }}>{MODELS.find(m => m.id === model)?.name}</span>
-                </div>
-                {loading ? (
-                  <p style={{ fontSize: 13, color: T.tm, fontStyle: "italic" }}>Generating...</p>
-                ) : (
-                  <>
-                    <div style={{ fontSize: 13, color: T.text, lineHeight: 1.75, whiteSpace: "pre-wrap", maxHeight: 280, overflowY: "auto" }}>{resp}</div>
-                    <div style={{ marginTop: 12 }}>
-                      <Btn onClick={evaluate} disabled={evaling} v="secondary">
-                        {evaling ? "Evaluating..." : "Evaluate & score"}
-                      </Btn>
-                    </div>
-                  </>
-                )}
-              </div>
+            <ResponseSection resp={resp} loading={loading} model={model} onEvaluate={evaluate} evaling={evaling} />
+
+            {error && (
+              <Card style={{ background: T.errBg, borderColor: T.errBorder, marginBottom: 12 }}>
+                <SectionLabel color={T.err}>{t("common.error")}</SectionLabel>
+                <p style={{ fontSize: 13, color: T.errText, lineHeight: 1.6, margin: 0 }}>{error}</p>
+              </Card>
             )}
 
             {ev && (
               <EvalResult
                 ev={ev} done={done} sel={sel}
+                prompt={prompt} courseTitle={course?.title}
                 onTryAgain={() => { setResp(""); setEv(null); setPrompt(""); }}
-                onNext={() => nx ? navigate(`/exercise/${nx.id}`) : navigate("/dashboard")}
+                onNext={() => nx ? navigate(`/course/${courseId}/exercise/${nx.id}`) : navigate(`/course/${courseId}`)}
                 nextExercise={nx}
               />
             )}

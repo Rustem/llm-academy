@@ -1,29 +1,37 @@
 # Roadmap
 
 ## Phase 1 — Content & Polish
-- [ ] Add more exercises (30+ total)
-- [ ] Domain-specific modules (medical, education, legal)
-- [ ] Exercise difficulty levels (beginner / intermediate / advanced)
-- [ ] Prompt templates library — reusable starting points for common tasks
-- [ ] Improve mobile responsiveness
+- [x] Add more exercises (30+ total) — comprehensive, high-quality study materials
+- [x] Domain-specific modules (medical, education, legal, psychotherapy)
+- [x] General-purpose course available without registration
+- [x] Exercise difficulty levels (beginner / intermediate / advanced)
+- [x] Prompt templates library — reusable starting points for common tasks
+- [x] Improve mobile responsiveness
 
 ## Phase 2 — Internationalization
-- [ ] i18n framework setup
-- [ ] Russian language support
-- [ ] Spanish language support
+- [x] i18n framework setup
+- [x] Russian language support
+- [x] Spanish language support
 
 ## Phase 3 — Social & Engagement
-- [ ] Leaderboard
-- [ ] Export & share your best prompts
-- [ ] User profiles with public stats
+- [x] Leaderboard
+- [x] Export & share your best prompts
+- [x] User profiles with public stats
 
 ## Phase 4 — Teams & Classrooms
-- [ ] Classroom mode — teachers assign exercises to students
-- [ ] Team dashboards with progress tracking
-- [ ] Custom exercise builder for educators
+- [x] Classroom mode — teachers assign exercises to students
+- [x] Team dashboards with progress tracking
+- [x] Custom exercise builder for educators
 
-## Phase 5 — Platform Growth
-- [ ] Certificate of completion (PDF export)
-- [ ] More LLM provider options
-- [ ] API for third-party integrations
-- [ ] Self-hosted deployment guide
+## Phase 5 — Contributor Ecosystem
+- [x] Contribution guidelines and exercise quality standards
+- [x] Exercise authoring workflow via prompt engineering
+- [x] Beta environment for full lifecycle testing of contributed content
+- [x] Fork & PR flow — primary author reviews and approves all contributions
+
+## Phase 6 — Platform Growth
+- [x] Certificate of completion (PDF export)
+- [x] More LLM provider options
+- [x] API for third-party integrations
+- [x] Self-hosted deployment guide
+- [x] Full CI/CD automation

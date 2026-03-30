@@ -13,11 +13,14 @@ class ProgressRepository(AbstractRepository[CompletedExercise]):
     def get_by_id(self, id: int) -> Optional[CompletedExercise]:
         return self.db.query(CompletedExercise).filter(CompletedExercise.id == id).first()
 
-    def get_by_user_and_exercise(self, user_id: int, exercise_id: int) -> Optional[CompletedExercise]:
+    def get_by_user_and_exercise(
+        self, user_id: int, exercise_id: int, course_id: str = "general"
+    ) -> Optional[CompletedExercise]:
         return (
             self.db.query(CompletedExercise)
             .filter(
                 CompletedExercise.user_id == user_id,
+                CompletedExercise.course_id == course_id,
                 CompletedExercise.exercise_id == exercise_id,
             )
             .first()
@@ -30,7 +33,9 @@ class ProgressRepository(AbstractRepository[CompletedExercise]):
                 query = query.filter(getattr(CompletedExercise, key) == value)
         return query.all()
 
-    def get_all_for_user(self, user_id: int) -> list[CompletedExercise]:
+    def get_all_for_user(self, user_id: int, course_id: str | None = None) -> list[CompletedExercise]:
+        if course_id:
+            return self.get_all(user_id=user_id, course_id=course_id)
         return self.get_all(user_id=user_id)
 
     def create(self, **kwargs) -> CompletedExercise:
@@ -40,8 +45,8 @@ class ProgressRepository(AbstractRepository[CompletedExercise]):
         self.db.refresh(record)
         return record
 
-    def upsert(self, user_id: int, exercise_id: int, **kwargs) -> CompletedExercise:
-        existing = self.get_by_user_and_exercise(user_id, exercise_id)
+    def upsert(self, user_id: int, exercise_id: int, course_id: str = "general", **kwargs) -> CompletedExercise:
+        existing = self.get_by_user_and_exercise(user_id, exercise_id, course_id)
         if existing:
             for key, value in kwargs.items():
                 if hasattr(existing, key):
@@ -49,7 +54,7 @@ class ProgressRepository(AbstractRepository[CompletedExercise]):
             self.db.commit()
             self.db.refresh(existing)
             return existing
-        return self.create(user_id=user_id, exercise_id=exercise_id, **kwargs)
+        return self.create(user_id=user_id, exercise_id=exercise_id, course_id=course_id, **kwargs)
 
     def update(self, id: int, **kwargs) -> Optional[CompletedExercise]:
         record = self.get_by_id(id)

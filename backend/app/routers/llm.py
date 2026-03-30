@@ -8,7 +8,8 @@ logger = logging.getLogger(__name__)
 from app.dependencies import get_current_user
 from app.models.user import User
 from app.schemas.llm import ChatReq, ChatResp, EvaluateReq, EvaluateResp
-from app.services.llm import call_openrouter
+from app.services.llm import call_openrouter, build_evaluation_prompt, parse_evaluation_response
+from app.services.course_loader import load_course
 
 router = APIRouter(prefix="/api/llm", tags=["llm"])
 
@@ -39,26 +40,16 @@ async def evaluate(
     req: EvaluateReq,
     current_user: User = Depends(get_current_user),
 ):
-    from app.routers.exercises import load_exercises
+    try:
+        data = load_course(req.course_id)
+    except HTTPException:
+        raise HTTPException(status_code=404, detail="Course not found")
 
-    exercises = load_exercises()
-    exercise = next((e for e in exercises if e["id"] == req.exercise_id), None)
+    exercise = next((e for e in data["exercises"] if e["id"] == req.exercise_id), None)
     if not exercise:
         raise HTTPException(status_code=404, detail="Exercise not found")
 
-    system_prompt = (
-        'You are an expert prompt engineering coach. Score 1-5 stars. '
-        'Respond ONLY in JSON, no fences:\n'
-        '{"stars":3,"feedback":"...","strengths":["..."],"improvements":["..."],"tip":"..."}'
-    )
-    user_message = (
-        f"EXERCISE: {exercise['title']}\n"
-        f"SCENARIO: {exercise['sc']}\n"
-        f"TASK: {exercise['task']}\n"
-        f"CRITERIA: {exercise['cr']}\n\n"
-        f"USER PROMPT:\n{req.user_prompt}\n\n"
-        f"AI RESPONSE:\n{req.ai_response}"
-    )
+    system_prompt, user_message = build_evaluation_prompt(exercise, req.user_prompt, req.ai_response)
 
     try:
         raw = await call_openrouter(
@@ -68,15 +59,8 @@ async def evaluate(
                 {"role": "user", "content": user_message},
             ],
         )
-        cleaned = raw.replace("```json", "").replace("```", "").strip()
-        parsed = json.loads(cleaned)
-        return EvaluateResp(
-            stars=parsed.get("stars", 3),
-            feedback=parsed.get("feedback", raw),
-            strengths=parsed.get("strengths", []),
-            improvements=parsed.get("improvements", []),
-            tip=parsed.get("tip", ""),
-        )
+        result = parse_evaluation_response(raw)
+        return EvaluateResp(**result)
     except json.JSONDecodeError:
         return EvaluateResp(stars=3, feedback=raw, strengths=[], improvements=[], tip="")
     except Exception as e:
